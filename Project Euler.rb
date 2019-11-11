@@ -330,10 +330,11 @@ def deconstructN(number)
   return sum
 end
 
-puts triangular_number(500)
+# puts triangular_number(500)
 
 
 ########### THIRDTEENTH PROBLEM ##########
+
 def first_nth_digits(n,series)
   series_arr = series.split(" ").map {|string| string.to_i }
   result = series_arr.reduce(:+).to_s
@@ -445,36 +446,42 @@ end
 
 ################ FOURTHTEEN PROBLEM ##################
 
-def longest_collatz(n)
-  longest_chain = 1
-  number_chain = 0
-  (1..n).each do |number|
-    if collatz_length(number) > longest_chain
-      longest_chain = collatz_length(number)
-      number_chain = number
+
+
+def longest_collatz(num)
+  longest_collatz = 0
+  longest_chain = 0
+
+  while num > 0 
+    current_chain = collatz_length(num)
+    if current_chain > longest_chain 
+      longest_collatz = num
+      longest_chain = current_chain
     end
+    num -= 1
   end
-    return number_chain
+
+  return longest_collatz
 end
 
 def collatz_length(num)
-  number = num
-  count = 1
-  while  number != 1
-    if number % 2 == 0
-      number = number / 2
-      count += 1
-    elsif number % 2 != 0
-      number = (number * 3) + 1
-      count += 1
-    end
+  current = num
+  chain = 0
+
+  while current != 1
+    current.even? ? current = current / 2 : current = 3 * current + 1
+    chain += 1
   end
-  return count
+
+  return chain + 1
 end
 
 # puts longest_collatz(1000000)
 
+
+
 ################ FIFTEENTH PROBLEM #############
+
 
 def lattice_paths(length)
   arr = [[1,1],[1]]
@@ -498,7 +505,9 @@ def adjacent_sum(arr)
   return new_arr << 1
 end
 
- # puts lattice_paths(20)
+#  puts lattice_paths(20)
+
+
 
 ################# SIXTEENTH PROBLEM ###############
 
@@ -549,40 +558,59 @@ end
 # puts number_letter_count(1000)
 
 ################### EIGHTEEN PROBLEM ############
-triangle_str = <<EOS
-75
-95 64
-17 47 82
-18 35 87 10
-20 04 82 47 65
-19 01 23 75 03 34
-88 02 77 73 07 63 67
-99 65 04 28 06 16 70 92
-41 41 26 56 83 40 80 70 33
-41 48 72 33 47 32 37 16 94 29
-53 71 44 65 25 43 91 52 97 51 14
-70 11 33 28 77 73 17 78 39 68 17 57
-91 71 52 38 17 14 91 43 58 50 27 29 48
-63 66 04 68 89 53 67 30 73 16 69 87 40 31
-04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
-EOS
 
-triangle = triangle_str.each_line.map { |line| line.split.map(&:to_i) }
 
-# print triangle
+
+$a = [
+	[75], 
+	[95, 64], 
+	[17, 47, 82],
+	[18, 35, 87, 10],
+	[20, 4, 82, 47, 65],
+	[19, 1, 23, 75, 3, 34],
+	[88, 2, 77, 73, 7, 63, 67],
+	[99, 65, 4, 28, 6, 16, 70, 92],
+	[41, 41, 26, 56, 83, 40, 80, 70, 33],
+	[41, 48, 72, 33, 47, 32, 37, 16, 94, 29],
+	[53, 71, 44, 65, 25, 43, 91, 52, 97, 51, 14],
+	[70, 11, 33, 28, 77, 73, 17, 78, 39, 68, 17, 57],
+	[91, 71, 52, 38, 17, 14, 91, 43, 58, 50, 27, 29, 48],
+	[63, 66, 4, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31],
+	[4, 62, 98, 27, 23, 9, 70, 98, 73, 93, 38, 53, 60, 4, 23]
+	]
+	
+def solve(row, col)
+	return 0 if row == $a.length
+	return $a[row][col] + [solve(row + 1, col), solve(row+1, col+1)].max
+end
+
+# puts solve(0, 0)
+# Have so study recursion did not figure out how to complete it.
+
 
 ############# NINETEENTH PROBLEM ############
 
+
+
 require "date"
-# puts Date.new(1901,1,1).upto(Date.new(2000,12,31)).find_all { |d| d.mday == 1 && d.wday == 0 }.count
+
+def counting_sundays(from, to)
+  count = 0
+  Date.new(from[0],from[1],from[2]).upto(Date.new(to[0],to[1],to[2])).find_all { |d| count += 1 if (d.mday == 1 && d.wday == 0) }
+  return count
+end
+
+
+# puts counting_sundays([1901,1,1],[2000,12,31])
+
+
 
 ############ TWENTYTH PROBLEM ##############
 
 def factorial_sum(n)
-  sum = 0
-  result  = (1..n).map {|num| num }.reduce(:*)
-  result.to_s.each_char {|char| sum += char.to_i }
-  return sum
+  mult = (1..n).inject(1) {|acc, num| acc * num }
+  result = mult.to_s.split('').inject(0) {|acc, num| acc + num.to_i }
+  return result
 end
 
 # puts factorial_sum(100)
@@ -605,6 +633,7 @@ end
 def sum_of_divisors(n)
   return (1...n).select {|divisor| n % divisor == 0}.reduce(0,:+)
 end
+
 
 # puts amicable_number(10000)
 
