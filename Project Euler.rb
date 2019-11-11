@@ -1,142 +1,206 @@
 ############ FIRST PROBLEM ################
+
+
+
 def multiples_3_and_5(n)
-  sum = 0
-  (1...n).each do |num|
-    if num % 3 == 0 || num % 5 == 0
-      sum += num
-    end
-  end
-  return sum
+  return (1...n).inject(0) { |acc, num| num % 3 == 0 || num % 5 == 0 ? acc + num : acc}
 end
+
 # puts multiples_3_and_5(1000)
+
+
 
 ########### SECOND PROBLEM #############
 
+
+
 def fibonacci(n)
   n1, n2 = 1, 2
-  sum = 3
   even_sum = 2
   until n2 >= n
     n1, n2 = n2, n1 + n2
-    if n2 % 2 == 0
-      even_sum += n2
-    end
-    sum += n2
+    even_sum += n2 if n2.even? # n2 % 2 == 0
   end
   return even_sum
 end
 
 # puts fibonacci(4000000)
 
+
+
+
 ################## THIRD PROBLEM ###############
-def largest_prime(n)
-  arr = []
+
+
+
+
+def largest_prime(num)
+  largest_prime = 0
   i = 2
-  while i <= n
-    if n % i == 0
-      n = n / i
-      arr << i
+  while i <= num
+    if num % i == 0
+      num = num / i
+      largest_prime = i if i > largest_prime
       i = 1
     end
     i += 1
   end
-  return arr
+  return largest_prime
 end
 
-# def prime?(num)
-#   limit = Math.sqrt(num)
-#   (2..limit).all? {|factor|num % factor != 0}
-# end
 # puts largest_prime(600851475143)
+
+
 
 ################ FOURTH PROBLEM ##########
 
+
 def largest_palindrome(n)
-  pali_arr = []
-  b = n / 2
+  largest_pali = 0
+  b = ((n / 2) + (n / 4)) # cutting numbers that are too low 
+
   (b..n).each_with_index do |num,idx|
     (b..n).each_with_index do |num2,idx2|
-      if idx2 > idx && palindrome(num * num2)
-        pali_arr << num * num2
+      if idx2 > idx 
+        mult = num * num2
+        largest_pali = mult if palindrome?(mult) && mult > largest_pali
       end
     end
   end
-  sorted_arr = pali_arr.sort_by {|num,idx| num }
-  return sorted_arr[-1]
+
+  return largest_pali
 end
 
-def palindrome(num)
+def palindrome?(num)
   num_arr = num.to_s.split("")
   return num_arr == num_arr.reverse
 end
 
-# puts largest_palindrome(9999)
+# puts largest_palindrome(999)
+
 
 ############### FITH PROBLEM ###########
 
+
+
 def smallest_multiple(factor)
+  arrHashes = []
+  finalHash = Hash.new(0)
+  (2..factor).each {|factor| arrHashes << deconstruct(factor) }
+  arrHashes.each do |hash| 
+      hash.each do |key, value|
+          finalHash[key] = value if finalHash[key] < value
+      end
+  end
+
+  return finalHash.inject(1) {|acc, (key,value)| acc * (key ** value) }
 end
+
+
+def deconstruct(number)
+
+  return {number => 1} if prime?(number)
+
+  hash = Hash.new(0)
+  i = 2
+  changed = number
+
+  until (hash.inject(1) {|acc, (key, value)| acc * (key ** hash[key]) }) == number
+    if changed % i == 0
+      hash[i] += 1
+      changed = changed / i
+      i = 1
+    end
+    i += 1
+  end
+
+  return hash
+end
+
+def prime?(num)
+limit = Math.sqrt(num)
+(2..limit).all? {|factor|num % factor != 0}
+end
+
 # puts smallest_multiple(20)
+
+
 
 ############# SIXTH PROBLEM #############
 
+
+# def sum_square_dif(n)
+#   sum_square = 0
+#   sum = 0
+
+#   (1..n).each do |num|
+#     sum_square += (num * num)
+#     sum += num
+#   end
+
+#   return total = (sum * sum ) - sum_square
+# end
+
+
 def sum_square_dif(n)
-  sum_square = 0
-  sum = 0
-
-  (1..n).each do |num|
-    sum_square += (num * num)
-    sum += num
-  end
-
-  return total = (sum * sum ) - sum_square
+  ((1..n).inject(1) {|acc, num| acc + num  } ** 2) - (1..n).inject(1) {|acc, num| acc + (num ** 2)  } 
 end
 
 # puts sum_square_dif(100)
 
+
+
 ############ SEVENTH PROBLEM ###########
 
+
+
+
 def st_prime(n)
-  arr = []
+  st_prime = 0
   counter = 0
   i = 2
   while counter < n
     if prime?(i)
-      arr << i
+      st_prime = i
       counter += 1
     end
       i += 1
   end
-  return arr[-1]
+  return st_prime
 end
 
-# def prime?(num)
-#   limit = Math.sqrt(num)
-#   (2..limit).all? {|factor|num % factor != 0}
-# end
+def prime?(num)
+  limit = Math.sqrt(num)
+  (2..limit).all? {|factor|num % factor != 0}
+end
 
 # puts st_prime(10001)
 
+
+
+
 ############ EIGTH PROBLEM ##############
+
+
+
 
 def largest_in_series(series,n)
   group_arr = []
   limit = series.length - n
   integer_arr = series.split("").map {|string| string.to_i }
-  (0..limit).each {|idx| group_arr << integer_arr[idx...idx + n]}
 
-  i = 0
-  while i < group_arr.length
-    group_arr[i] = group_arr[i].reduce(1) {|product,num| product *= num }
-    i += 1
-  end
+  (0..limit).each {|idx| group_arr << integer_arr[idx...idx + n].inject(1){|acc, num| acc * num }}
+
   return group_arr.max
 end
 
+# p largest_in_series("7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450",13)
 
-# puts largest_in_series("7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450",13)
+
 
 ############# NINTH PROBLEM ##############
+
+
 
 def pythagorean_triplet(num)
   (1..num).each do |a|
@@ -151,26 +215,35 @@ end
 
 # puts pythagorean_triplet(1000)
 
+
+
 ########### TENTH PROBLEM ##########
+
+
 
 def prime_sum(n)
   sum = 0
+
   (2..n).each do |num|
     if prime?(num)
       sum += num
     end
   end
+
   return sum
 end
 
-# def prime?(num)
-#   limit = Math.sqrt(num)
-#   (2..limit).all? {|factor|num % factor != 0}
-# end
+
+def prime?(num)
+  limit = Math.sqrt(num)
+  (2..limit).all? {|factor|num % factor != 0}
+end
 
 # puts prime_sum(2000000)
 
 ############# ELEVENTH PROBLEM ###########
+
+
 
 grid_string = <<EOS
 08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
@@ -226,38 +299,38 @@ grid.each_with_index do |row, y|
   end
 end
 # puts max
+
+
+
 ############ TWELVETH PROBLEM ###########
 
 def triangular_number(n)
   i = 1
   count = 2
-  until divisor_count(i) > n
+  until deconstructN(i) > n
      i = i + count
      count = count + 1
   end
   return i
 end
 
-def divisor_count(number)
-  count = 0
-  (1..Math.sqrt(number)).each do |n|
-    if (number%n) == 0
-      count += 1
+def deconstructN(number)
+  sum = 0
+  i = 1
+  while i <= Math.sqrt(number)
+    if number % i == 0
+      sum += 1
     end
+    i += 1
   end
-  count *= 2
-  if is_square(number)
-    count -= 1
-  end
-  return count
+
+  sum *= 2
+  sum -= 1 if Math.sqrt(sum) % 1 == 0
+
+  return sum
 end
 
-def is_square(num)
-  Math.sqrt(num) % 1 == 0
-end
-
-
-# puts triangular_number(500)
+puts triangular_number(500)
 
 
 ########### THIRDTEENTH PROBLEM ##########
