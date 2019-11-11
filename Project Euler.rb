@@ -639,9 +639,34 @@ end
 
 ############## TWENTY-SECOND ###########
 
+
+
 def name_score(file)
-  #
+  arr = []
+  sum = 0
+
+  file.each do |line|
+    arr = line.split(",")
+  end
+
+  arrSorted = arr.map {|name| name.gsub!(/[^0-9A-Za-z]/, '') }.sort
+  arrSorted.each_with_index {|name, i | sum += name_value(name, i + 1) }
+
+  return sum
 end
+
+def name_value(name,i)
+
+  alpha_values = Hash.new(0)
+  "qwertyuiopasdfghjklzxcvbnm".split('').sort.each_with_index {|char, i| alpha_values[char] = i + 1 }
+  total = name.split("").inject(0) {|acc, char| acc + alpha_values[char.downcase] } * i
+
+  return total
+end
+
+# puts name_score(File.open("p022_names.txt"))
+
+
 
 ############ TWENTY-THIRD ##########
 
@@ -662,9 +687,9 @@ end
 def non_abundant_sum(num)
   abundants = (2..num).select {|n| abundant?(n) }
   sums = []
-  abundants.each do |x,idx1|
-    abundants.each do |y,idx2|
-      sum = x + y
+  abundants.each do |num1|
+    abundants.each do |num2|
+      sum = num1 + num2
       sums << sum
     end
   end
@@ -675,7 +700,14 @@ end
 # puts non_abundant_sum(28123)
 
 ############ 24th #############
-# puts (0..9).to_a.permutation(10).to_a[999999].join
+
+
+def lexicographic_permutations(range,n)
+  puts (0..range).to_a.permutation(range + 1).to_a[n].join('')
+end
+
+# puts lexicographic_permutations(9, 999999)
+
 
 ############ 25th #############
 
@@ -686,7 +718,6 @@ def fibonacci_digit(n)
     n1, n2 = n2, n1 + n2
     i += 1
   end
-
   return i
 end
 
